@@ -2,6 +2,7 @@ package com.sumkor.mapper;
 
 import com.sumkor.entity.Student;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ public interface StudentMapper {
 
     List<Student> selectAll();
 
+    @Select("SELECT * FROM student WHERE id = #{id}")
     Student selectByPrimaryKey(int id);
 
     int updateByPrimaryKey(Student student);

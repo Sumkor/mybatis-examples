@@ -33,6 +33,7 @@
     </environments>
 
     <mappers>
-        <mapper resource="StudentMapper.xml"/>
+        <package name="com.sumkor.mapper"/>
+<!--        <mapper resource="com/sumkor/mapper/StudentMapper.xml"/>-->
     </mappers>
 </configuration>
