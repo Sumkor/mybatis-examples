@@ -3,8 +3,12 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <!-- 配置全局属性 -->
+
+    <!-- 引入其他配置文件 -->
+    <properties resource="jdbc.properties"/>
+
     <settings>
+        <!-- 指定 MyBatis 所用日志的具体实现，未指定时将自动查找 -->
         <setting name="logImpl" value="LOG4J"/>
     </settings>
 
@@ -17,22 +21,23 @@
             <transactionManager type="JDBC">
                 <property name="" value=""/>
             </transactionManager>
-            <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/testdb?useUnicode=true"/>
-                <property name="username" value="test"/>
-                <property name="password" value="test"/>
-            </dataSource>
 <!--            <dataSource type="POOLED">-->
-<!--                <property name="driver" value="${jdbc.driver}"/>-->
-<!--                <property name="url" value="${jdbc.url}"/>-->
-<!--                <property name="username" value="${jdbc.username}"/>-->
-<!--                <property name="password" value="${jdbc.password}"/>-->
+<!--                <property name="driver" value="com.mysql.jdbc.Driver"/>-->
+<!--                <property name="url" value="jdbc:mysql://localhost:3306/testdb?useUnicode=true"/>-->
+<!--                <property name="username" value="test"/>-->
+<!--                <property name="password" value="test"/>-->
 <!--            </dataSource>-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
         </environment>
     </environments>
 
     <mappers>
+        <!-- 使用 package 标签，需要把 xml 映射文件和 Mapper 接口文件放在同一个目录，而且必须同名 -->
         <package name="com.sumkor.mapper"/>
 <!--        <mapper resource="com/sumkor/mapper/StudentMapper.xml"/>-->
     </mappers>
