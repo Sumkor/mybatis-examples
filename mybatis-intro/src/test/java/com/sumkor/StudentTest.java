@@ -61,29 +61,45 @@ public class StudentTest {
              * @see org.apache.ibatis.transaction.TransactionFactory#newTransaction(javax.sql.DataSource, org.apache.ibatis.session.TransactionIsolationLevel, boolean)
              * @see org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory#newTransaction(javax.sql.DataSource, org.apache.ibatis.session.TransactionIsolationLevel, boolean)
              *
-             * 2. 默认使用 {@link org.apache.ibatis.executor.SimpleExecutor} 作为执行器，默认使用缓存 {@link org.apache.ibatis.executor.CachingExecutor}
+             * 2. 默认使用 {@link org.apache.ibatis.executor.SimpleExecutor} 作为执行器，进一步封装为缓存执行器 {@link org.apache.ibatis.executor.CachingExecutor}
              * @see org.apache.ibatis.session.Configuration#newExecutor(org.apache.ibatis.transaction.Transaction, org.apache.ibatis.session.ExecutorType)
              *
-             * 3. 最后构造 DefaultSqlSession 对象
+             * 3. 最后构造 DefaultSqlSession 对象，默认 autoCommit 为 false
              * @see org.apache.ibatis.session.defaults.DefaultSqlSession#DefaultSqlSession(org.apache.ibatis.session.Configuration, org.apache.ibatis.executor.Executor, boolean)
              */
 
-            StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class);
-            /**
-             * 获取 Mapper 接口的动态代理实例
-             * @see org.apache.ibatis.session.defaults.DefaultSqlSession#getMapper(java.lang.Class)
-             * @see org.apache.ibatis.session.Configuration#getMapper(java.lang.Class, org.apache.ibatis.session.SqlSession)
-             * @see org.apache.ibatis.binding.MapperRegistry#getMapper(java.lang.Class, org.apache.ibatis.session.SqlSession)
-             * @see org.apache.ibatis.binding.MapperProxyFactory#newInstance(org.apache.ibatis.session.SqlSession)
-             * @see org.apache.ibatis.binding.MapperProxyFactory#newInstance(org.apache.ibatis.binding.MapperProxy)
-             */
-            List<Student> students = studentMapper.selectAll();
-            for (int i = 0; i < students.size(); i++) {
-                System.out.println(students.get(i));
-            }
+//            StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class);
+//            /**
+//             * 获取 Mapper 接口的动态代理实例
+//             * @see org.apache.ibatis.session.defaults.DefaultSqlSession#getMapper(java.lang.Class)
+//             * @see org.apache.ibatis.session.Configuration#getMapper(java.lang.Class, org.apache.ibatis.session.SqlSession)
+//             * @see org.apache.ibatis.binding.MapperRegistry#getMapper(java.lang.Class, org.apache.ibatis.session.SqlSession)
+//             * @see org.apache.ibatis.binding.MapperProxyFactory#newInstance(org.apache.ibatis.session.SqlSession)
+//             * @see org.apache.ibatis.binding.MapperProxyFactory#newInstance(org.apache.ibatis.binding.MapperProxy)
+//             */
+//            List<Student> students = studentMapper.selectAll();
+//            for (int i = 0; i < students.size(); i++) {
+//                System.out.println(students.get(i));
+//            }
 
-//            students = sqlSession.selectList("selectAll");
-//            System.out.println("students = " + students);
+            List<Student> students = sqlSession.selectList("selectAll");
+            /**
+             * @see org.apache.ibatis.session.defaults.DefaultSqlSession#selectList(java.lang.String, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler)
+             *
+             * 1. 从 Configuration 对象中获取 sql
+             *
+             * 2. 使用 Executor 来执行 sql
+             * @see org.apache.ibatis.executor.CachingExecutor#query(org.apache.ibatis.mapping.MappedStatement, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler)
+             * @see org.apache.ibatis.executor.BaseExecutor#query(org.apache.ibatis.mapping.MappedStatement, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.cache.CacheKey, org.apache.ibatis.mapping.BoundSql)
+             * @see org.apache.ibatis.executor.BaseExecutor#queryFromDatabase(org.apache.ibatis.mapping.MappedStatement, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.cache.CacheKey, org.apache.ibatis.mapping.BoundSql)
+             * @see org.apache.ibatis.executor.SimpleExecutor#doQuery(org.apache.ibatis.mapping.MappedStatement, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)
+             *
+             * @see org.apache.ibatis.executor.statement.RoutingStatementHandler#query(java.sql.Statement, org.apache.ibatis.session.ResultHandler)
+             * @see org.apache.ibatis.executor.statement.PreparedStatementHandler#query(java.sql.Statement, org.apache.ibatis.session.ResultHandler)
+             *
+             * @see com.mysql.cj.jdbc.ClientPreparedStatement#execute()
+             */
+            System.out.println("students = " + students);
             Thread.sleep(10000000);
 
         } catch (Exception e) {
