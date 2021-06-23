@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sumkor.mapper.StudentMapper">
+    <!-- 要注意 MyBatis 不会通过检测数据库元信息来决定使用哪种类型，所以必须在参数和结果映射中指明字段的 jdbcType 类型，以使其能够绑定到正确的类型处理器上。这是因为 MyBatis 直到语句被执行时才清楚数据类型 -->
     <resultMap id="BaseResultMap" type="com.sumkor.entity.Student">
+    <!-- 相同点：id 和 result 都将一个列的值映射到一个简单数据类型（String, int, double, Date 等）的属性或字段。
+         不同点：id 元素对应的属性会被标记为对象的标识符，在比较对象实例时使用。这样可以提高整体的性能，尤其是进行缓存和嵌套结果映射（也就是连接映射）的时候。 -->
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
@@ -10,6 +13,7 @@
         <result column="locked" jdbcType="TINYINT" property="locked"/>
         <result column="gmt_created" jdbcType="TIMESTAMP" property="gmtCreated"/>
         <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
+        <!-- 支持的 jdbcType 见 org.apache.ibatis.type.JdbcType 或者 https://mybatis.org/mybatis-3/zh/sqlmap-xml.html -->
     </resultMap>
 
     <sql id="base_column_list">
