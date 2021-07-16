@@ -46,7 +46,7 @@ public class StudentTest {
     }
 
     /**
-     * 使用 XML 完成 SQL 映射
+     * sqlSession.selectList
      */
     @Test
     public void selectAll() {
@@ -55,7 +55,7 @@ public class StudentTest {
              * @see org.apache.ibatis.session.defaults.DefaultSqlSessionFactory#openSession()
              * @see org.apache.ibatis.session.defaults.DefaultSqlSessionFactory#openSessionFromDataSource(org.apache.ibatis.session.ExecutorType, org.apache.ibatis.session.TransactionIsolationLevel, boolean)
              *
-             * 1. 由于 mybatis-config.xml 中的配置，这里使用 {@link org.apache.ibatis.transaction.jdbc.JdbcTransaction} 来管理事务
+             * 1. 由于 mybatis-config.xml 中的配置 transactionManager type="JDBC"，这里使用 {@link org.apache.ibatis.transaction.jdbc.JdbcTransaction} 来管理事务
              * @see org.apache.ibatis.transaction.TransactionFactory#newTransaction(javax.sql.DataSource, org.apache.ibatis.session.TransactionIsolationLevel, boolean)
              * @see org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory#newTransaction(javax.sql.DataSource, org.apache.ibatis.session.TransactionIsolationLevel, boolean)
              *
@@ -100,10 +100,20 @@ public class StudentTest {
     }
 
     /**
-     * 使用注解完成 SQL 映射
+     * sqlSession.getMapper
      */
     @Test
     public void selectByPrimaryKey() {
+        /**
+         * 构建 SqlSessionFactory 时，会解析 mybatis-config.xml 文件，其中的 mapper 节点会触发解析 SQL XML 文件
+         * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#parse()
+         * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#parseConfiguration(org.apache.ibatis.parsing.XNode)
+         *
+         * 解析 SQL XML 文件，将 将 mapper 接口类注册至 Configuration 对象中
+         * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#mapperElement(org.apache.ibatis.parsing.XNode)
+         * @see org.apache.ibatis.session.Configuration#addMapper(java.lang.Class)
+         * @see org.apache.ibatis.binding.MapperRegistry#addMapper(java.lang.Class)
+         */
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class);
             /**
@@ -114,6 +124,8 @@ public class StudentTest {
              * @see org.apache.ibatis.session.defaults.DefaultSqlSession#getMapper(Class)
              * @see org.apache.ibatis.session.Configuration#getMapper(Class, SqlSession)
              * @see org.apache.ibatis.binding.MapperRegistry#getMapper(Class, SqlSession)
+             *
+             * JDK 动态代理
              * @see org.apache.ibatis.binding.MapperProxyFactory#newInstance(SqlSession)
              * @see org.apache.ibatis.binding.MapperProxyFactory#newInstance(org.apache.ibatis.binding.MapperProxy)
              */

@@ -19,6 +19,7 @@
 
     <modules>
         <module>mybatis-intro</module>
+        <module>mybatis-plugin</module>
     </modules>
 
     <dependencies>
