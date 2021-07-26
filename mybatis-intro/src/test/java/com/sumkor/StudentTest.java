@@ -66,6 +66,7 @@ public class StudentTest {
              * @see org.apache.ibatis.session.defaults.DefaultSqlSession#DefaultSqlSession(org.apache.ibatis.session.Configuration, org.apache.ibatis.executor.Executor, boolean)
              */
 
+//            List<Student> students = sqlSession.selectList("selectByPrimaryKey", 1);
             List<Student> students = sqlSession.selectList("selectAll");
             /**
              * 全限定名（比如 “com.sumkor.mapper.StudentMapper.selectAll）将被直接用于查找及使用。
@@ -80,16 +81,43 @@ public class StudentTest {
              *
              * 1. 从 Configuration 对象中获取 sql
              *
-             * 2. 使用 Executor 来执行 sql
+             * 2.0 Executor，执行器，支持拦截
+             *
+             * 默认使用一级缓存
              * @see org.apache.ibatis.executor.CachingExecutor#query(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler)
              * @see org.apache.ibatis.executor.BaseExecutor#query(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.cache.CacheKey, org.apache.ibatis.mapping.BoundSql)
              * @see org.apache.ibatis.executor.BaseExecutor#queryFromDatabase(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.cache.CacheKey, org.apache.ibatis.mapping.BoundSql)
              * @see org.apache.ibatis.executor.SimpleExecutor#doQuery(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)
              *
-             * @see org.apache.ibatis.executor.statement.RoutingStatementHandler#query(java.sql.Statement, org.apache.ibatis.session.ResultHandler)
-             * @see org.apache.ibatis.executor.statement.PreparedStatementHandler#query(java.sql.Statement, org.apache.ibatis.session.ResultHandler)
+             * 2.1 ParameterHandler，参数处理器，支持拦截
              *
+             * 入口
+             * @see org.apache.ibatis.executor.SimpleExecutor#doQuery(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)
+             * 通过数据库连接对象 Connection 获取 Statement
+             * @see org.apache.ibatis.executor.SimpleExecutor#prepareStatement(org.apache.ibatis.executor.statement.StatementHandler, org.apache.ibatis.logging.Log)
+             * 使用参数处理器，设置参数
+             * @see org.apache.ibatis.executor.statement.RoutingStatementHandler#parameterize(java.sql.Statement)
+             * @see org.apache.ibatis.executor.statement.PreparedStatementHandler#parameterize(java.sql.Statement)
+             * @see org.apache.ibatis.scripting.defaults.DefaultParameterHandler#setParameters(java.sql.PreparedStatement)
+             *
+             * 2.2 StatementHandler，SQL语法构建器，支持拦截
+             *
+             * 入口
+             * @see org.apache.ibatis.executor.SimpleExecutor#doQuery(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)
+             * @see org.apache.ibatis.executor.statement.RoutingStatementHandler#query(java.sql.Statement, org.apache.ibatis.session.ResultHandler)
+             * 使用 Statement 执行 SQL
+             * @see org.apache.ibatis.executor.statement.PreparedStatementHandler#query(java.sql.Statement, org.apache.ibatis.session.ResultHandler)
+             * @see org.apache.ibatis.logging.jdbc.PreparedStatementLogger#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
+             * 反射调用
+             * @see java.sql.PreparedStatement#execute()
+             * 由于使用了 mysql 驱动，实际是执行，向 mysql 服务器发送数据
              * @see com.mysql.cj.jdbc.ClientPreparedStatement#execute()
+             *
+             * 2.3 ResultSetHandler，结果集处理器，支持拦截
+             *
+             * 入口（Statement 执行完 SQL 之后）
+             * @see org.apache.ibatis.executor.statement.PreparedStatementHandler#query(java.sql.Statement, org.apache.ibatis.session.ResultHandler)
+             * @see org.apache.ibatis.executor.resultset.DefaultResultSetHandler#handleResultSets(java.sql.Statement)
              */
             System.out.println("students = " + students);
             Thread.sleep(10000000);
@@ -109,7 +137,7 @@ public class StudentTest {
          * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#parse()
          * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#parseConfiguration(org.apache.ibatis.parsing.XNode)
          *
-         * 解析 SQL XML 文件，将 将 mapper 接口类注册至 Configuration 对象中
+         * 解析 SQL XML 文件，将 mapper 接口类注册至 Configuration 对象中
          * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#mapperElement(org.apache.ibatis.parsing.XNode)
          * @see org.apache.ibatis.session.Configuration#addMapper(java.lang.Class)
          * @see org.apache.ibatis.binding.MapperRegistry#addMapper(java.lang.Class)
