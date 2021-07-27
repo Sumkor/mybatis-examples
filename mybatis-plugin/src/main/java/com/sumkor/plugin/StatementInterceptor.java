@@ -1,10 +1,8 @@
 package com.sumkor.plugin;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
@@ -24,6 +22,7 @@ import java.sql.Connection;
                 args = {Connection.class, Integer.class}
         )
 })
+@Slf4j
 public class StatementInterceptor implements Interceptor {
 
     @Override
@@ -33,9 +32,17 @@ public class StatementInterceptor implements Interceptor {
 
         RowBounds rowBounds = (RowBounds) metaObject.getValue("delegate.rowBounds");
         if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-            return invocation.proceed();
+            /*return invocation.proceed();*/
         }
+        log.info("------------------StatementInterceptor开始------------------");
+        String originalSql = (String) metaObject.getValue("delegate.boundSql.sql");
+        log.info("originalSql: {}", originalSql);
+        log.info("------------------StatementInterceptor结束------------------");
+        return invocation.proceed();
+    }
 
-        return null;
+    @Override
+    public Object plugin(Object o) {
+        return Plugin.wrap(o, this); // 封装代理类
     }
 }

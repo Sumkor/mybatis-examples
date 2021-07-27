@@ -2,6 +2,7 @@ package com.sumkor;
 
 import com.sumkor.entity.Student;
 import com.sumkor.mapper.StudentMapper;
+import com.sumkor.plugin.page.PageUtil;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -47,11 +48,15 @@ public class StudentTest {
     }
 
     @Test
-    public void test() {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        for (int i = 0; i < 10; i++) {
-            long l = random.nextLong(15, 20);
-            System.out.println(l);
+    public void page() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PageUtil.setPagingParam(1, 2);
+            List<Student> students = sqlSession.selectList("selectAll");
+            for (int i = 0; i < students.size(); i++) {
+                System.out.println(students.get(i));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

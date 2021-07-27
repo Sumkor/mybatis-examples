@@ -143,7 +143,7 @@ public class StudentTest {
          * @see org.apache.ibatis.binding.MapperRegistry#addMapper(java.lang.Class)
          */
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class);
+            StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class); // 这里每次 get 出来都得到一个新的实例
             /**
              * 虽然从技术层面上来讲，任何映射器实例的最大作用域与请求它们的 SqlSession 相同。但方法作用域才是映射器实例的最合适的作用域。
              * 也就是说，映射器实例应该在调用它们的方法中被获取，使用完毕之后即可丢弃。 映射器实例并不需要被显式地关闭
@@ -158,6 +158,18 @@ public class StudentTest {
              * @see org.apache.ibatis.binding.MapperProxyFactory#newInstance(org.apache.ibatis.binding.MapperProxy)
              */
             Student student = studentMapper.selectByPrimaryKey(1);
+            /**
+             * 交给代理类执行
+             * @see org.apache.ibatis.binding.MapperProxy#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
+             * @see org.apache.ibatis.binding.MapperProxy.PlainMethodInvoker#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[], org.apache.ibatis.session.SqlSession)
+             * @see org.apache.ibatis.binding.MapperMethod#execute(org.apache.ibatis.session.SqlSession, java.lang.Object[])
+             *
+             * 这里是查询操作
+             * @see org.apache.ibatis.session.defaults.DefaultSqlSession#selectOne(java.lang.String, java.lang.Object)
+             * @see org.apache.ibatis.session.defaults.DefaultSqlSession#selectList(java.lang.String, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler)
+             *
+             * 后续流程与 sqlSession.selectList 一致
+             */
             System.out.println(student);
         } catch (Exception e) {
             e.printStackTrace();

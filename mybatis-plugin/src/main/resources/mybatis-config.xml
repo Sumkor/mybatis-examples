@@ -20,6 +20,11 @@
         <package name="com.sumkor.entity"/>
     </typeAliases>
 
+    <plugins>
+        <plugin interceptor="com.sumkor.plugin.StatementInterceptor"/>
+        <plugin interceptor="com.sumkor.plugin.PageInterceptor"/>
+    </plugins>
+
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC">
