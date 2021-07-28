@@ -20,7 +20,7 @@ import java.util.List;
  * @author Sumkor
  * @since 2021/6/21
  */
-public class StudentTest {
+public class SelectListTest {
 
     private static SqlSessionFactory sqlSessionFactory;
 
@@ -47,6 +47,7 @@ public class StudentTest {
 
     /**
      * sqlSession.selectList
+     * 关注 Executor -> StatementHandler 的流程
      */
     @Test
     public void selectAll() {
@@ -81,15 +82,22 @@ public class StudentTest {
              *
              * 1. 从 Configuration 对象中获取 sql
              *
-             * 2.0 Executor，执行器，支持拦截
+             * 2. 执行 Executor#query
              *
-             * 默认使用一级缓存
+             * 这里 Executor 是执行器，支持插件扩展
+             * 默认使用一级缓存执行器
              * @see org.apache.ibatis.executor.CachingExecutor#query(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler)
              * @see org.apache.ibatis.executor.BaseExecutor#query(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.cache.CacheKey, org.apache.ibatis.mapping.BoundSql)
              * @see org.apache.ibatis.executor.BaseExecutor#queryFromDatabase(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.cache.CacheKey, org.apache.ibatis.mapping.BoundSql)
              * @see org.apache.ibatis.executor.SimpleExecutor#doQuery(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)
              *
-             * 2.1 ParameterHandler，参数处理器，支持拦截
+             * ！！！这里可以看到整个流程是由 StatementHandler 串起来的
+             * StatementHandler#prepare
+             * StatementHandler#parameterize -> ParameterHandler#setParameters
+             * StatementHandler#query -> ResultSetHandler#handleResultSets
+             *
+             *
+             * 2.1 ParameterHandler，参数处理器，支持插件扩展
              *
              * 入口
              * @see org.apache.ibatis.executor.SimpleExecutor#doQuery(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)
@@ -100,7 +108,7 @@ public class StudentTest {
              * @see org.apache.ibatis.executor.statement.PreparedStatementHandler#parameterize(java.sql.Statement)
              * @see org.apache.ibatis.scripting.defaults.DefaultParameterHandler#setParameters(java.sql.PreparedStatement)
              *
-             * 2.2 StatementHandler，SQL语法构建器，支持拦截
+             * 2.2 StatementHandler，SQL语法构建器，支持插件扩展
              *
              * 入口
              * @see org.apache.ibatis.executor.SimpleExecutor#doQuery(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)
@@ -113,66 +121,17 @@ public class StudentTest {
              * 由于使用了 mysql 驱动，实际是执行，向 mysql 服务器发送数据
              * @see com.mysql.cj.jdbc.ClientPreparedStatement#execute()
              *
-             * 2.3 ResultSetHandler，结果集处理器，支持拦截
+             * 2.3 ResultSetHandler，结果集处理器，支持插件扩展
              *
              * 入口（Statement 执行完 SQL 之后）
              * @see org.apache.ibatis.executor.statement.PreparedStatementHandler#query(java.sql.Statement, org.apache.ibatis.session.ResultHandler)
              * @see org.apache.ibatis.executor.resultset.DefaultResultSetHandler#handleResultSets(java.sql.Statement)
              */
             System.out.println("students = " + students);
-            Thread.sleep(10000000);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * sqlSession.getMapper
-     */
-    @Test
-    public void selectByPrimaryKey() {
-        /**
-         * 构建 SqlSessionFactory 时，会解析 mybatis-config.xml 文件，其中的 mapper 节点会触发解析 SQL XML 文件
-         * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#parse()
-         * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#parseConfiguration(org.apache.ibatis.parsing.XNode)
-         *
-         * 解析 SQL XML 文件，将 mapper 接口类注册至 Configuration 对象中
-         * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#mapperElement(org.apache.ibatis.parsing.XNode)
-         * @see org.apache.ibatis.session.Configuration#addMapper(java.lang.Class)
-         * @see org.apache.ibatis.binding.MapperRegistry#addMapper(java.lang.Class)
-         */
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class); // 这里每次 get 出来都得到一个新的实例
-            /**
-             * 虽然从技术层面上来讲，任何映射器实例的最大作用域与请求它们的 SqlSession 相同。但方法作用域才是映射器实例的最合适的作用域。
-             * 也就是说，映射器实例应该在调用它们的方法中被获取，使用完毕之后即可丢弃。 映射器实例并不需要被显式地关闭
-             *
-             * 获取 Mapper 接口的动态代理实例
-             * @see org.apache.ibatis.session.defaults.DefaultSqlSession#getMapper(Class)
-             * @see org.apache.ibatis.session.Configuration#getMapper(Class, SqlSession)
-             * @see org.apache.ibatis.binding.MapperRegistry#getMapper(Class, SqlSession)
-             *
-             * JDK 动态代理
-             * @see org.apache.ibatis.binding.MapperProxyFactory#newInstance(SqlSession)
-             * @see org.apache.ibatis.binding.MapperProxyFactory#newInstance(org.apache.ibatis.binding.MapperProxy)
-             */
-            Student student = studentMapper.selectByPrimaryKey(1);
-            /**
-             * 交给代理类执行
-             * @see org.apache.ibatis.binding.MapperProxy#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
-             * @see org.apache.ibatis.binding.MapperProxy.PlainMethodInvoker#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[], org.apache.ibatis.session.SqlSession)
-             * @see org.apache.ibatis.binding.MapperMethod#execute(org.apache.ibatis.session.SqlSession, java.lang.Object[])
-             *
-             * 这里是查询操作
-             * @see org.apache.ibatis.session.defaults.DefaultSqlSession#selectOne(java.lang.String, java.lang.Object)
-             * @see org.apache.ibatis.session.defaults.DefaultSqlSession#selectList(java.lang.String, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler)
-             *
-             * 后续流程与 sqlSession.selectList 一致
-             */
-            System.out.println(student);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

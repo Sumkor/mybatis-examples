@@ -1,0 +1,161 @@
+
+ClassLoader:                                                                   
++-sun.misc.Launcher$AppClassLoader@18b4aac2                                    
+  +-sun.misc.Launcher$ExtClassLoader@725bef66                                  
+
+Location:                                                                      
+                                                                               
+
+/*
+ * Decompiled with CFR.
+ * 
+ * Could not load the following classes:
+ *  com.sumkor.entity.Student
+ *  com.sumkor.mapper.StudentMapper
+ */
+package com.sun.proxy;
+
+import com.sumkor.entity.Student;
+import com.sumkor.mapper.StudentMapper;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+public final class $Proxy8
+extends Proxy
+implements StudentMapper {
+    private static Method m1;
+    private static Method m5;
+    private static Method m2;
+    private static Method m7;
+    private static Method m3;
+    private static Method m6;
+    private static Method m4;
+    private static Method m0;
+
+    public $Proxy8(InvocationHandler invocationHandler) {
+        super(invocationHandler);
+    }
+
+    public final boolean equals(Object object) {
+        try {
+            return (Boolean)this.h.invoke(this, m1, new Object[]{object});
+        }
+        catch (Error | RuntimeException throwable) {
+            throw throwable;
+        }
+        catch (Throwable throwable) {
+            throw new UndeclaredThrowableException(throwable);
+        }
+    }
+
+    public final int updateByPrimaryKey(Student student) {
+        try {
+            return (Integer)this.h.invoke(this, m5, new Object[]{student});
+        }
+        catch (Error | RuntimeException throwable) {
+            throw throwable;
+        }
+        catch (Throwable throwable) {
+            throw new UndeclaredThrowableException(throwable);
+        }
+    }
+
+    public final String toString() {
+        try {
+            return (String)this.h.invoke(this, m2, null);
+        }
+        catch (Error | RuntimeException throwable) {
+            throw throwable;
+        }
+        catch (Throwable throwable) {
+            throw new UndeclaredThrowableException(throwable);
+        }
+    }
+
+    public final List selectBetweenCreatedTimeParam(Date date, Date date2) {
+        try {
+            return (List)this.h.invoke(this, m7, new Object[]{date, date2});
+        }
+        catch (Error | RuntimeException throwable) {
+            throw throwable;
+        }
+        catch (Throwable throwable) {
+            throw new UndeclaredThrowableException(throwable);
+        }
+    }
+
+    public final List selectAll() {
+        try {
+            return (List)this.h.invoke(this, m3, null);
+        }
+        catch (Error | RuntimeException throwable) {
+            throw throwable;
+        }
+        catch (Throwable throwable) {
+            throw new UndeclaredThrowableException(throwable);
+        }
+    }
+
+    public final List selectBetweenCreatedTime(Map map) {
+        try {
+            return (List)this.h.invoke(this, m6, new Object[]{map});
+        }
+        catch (Error | RuntimeException throwable) {
+            throw throwable;
+        }
+        catch (Throwable throwable) {
+            throw new UndeclaredThrowableException(throwable);
+        }
+    }
+
+    public final Student selectByPrimaryKey(int n) {
+        try {
+            return (Student)this.h.invoke(this, m4, new Object[]{n});
+        }
+        catch (Error | RuntimeException throwable) {
+            throw throwable;
+        }
+        catch (Throwable throwable) {
+            throw new UndeclaredThrowableException(throwable);
+        }
+    }
+
+    public final int hashCode() {
+        try {
+            return (Integer)this.h.invoke(this, m0, null);
+        }
+        catch (Error | RuntimeException throwable) {
+            throw throwable;
+        }
+        catch (Throwable throwable) {
+            throw new UndeclaredThrowableException(throwable);
+        }
+    }
+
+    static {
+        try {
+            m1 = Class.forName("java.lang.Object").getMethod("equals", Class.forName("java.lang.Object"));
+            m5 = Class.forName("com.sumkor.mapper.StudentMapper").getMethod("updateByPrimaryKey", Class.forName("com.sumkor.entity.Student"));
+            m2 = Class.forName("java.lang.Object").getMethod("toString", new Class[0]);
+            m7 = Class.forName("com.sumkor.mapper.StudentMapper").getMethod("selectBetweenCreatedTimeParam", Class.forName("java.util.Date"), Class.forName("java.util.Date"));
+            m3 = Class.forName("com.sumkor.mapper.StudentMapper").getMethod("selectAll", new Class[0]);
+            m6 = Class.forName("com.sumkor.mapper.StudentMapper").getMethod("selectBetweenCreatedTime", Class.forName("java.util.Map"));
+            m4 = Class.forName("com.sumkor.mapper.StudentMapper").getMethod("selectByPrimaryKey", Integer.TYPE);
+            m0 = Class.forName("java.lang.Object").getMethod("hashCode", new Class[0]);
+            return;
+        }
+        catch (NoSuchMethodException noSuchMethodException) {
+            throw new NoSuchMethodError(noSuchMethodException.getMessage());
+        }
+        catch (ClassNotFoundException classNotFoundException) {
+            throw new NoClassDefFoundError(classNotFoundException.getMessage());
+        }
+    }
+}
+
+Affect(row-cnt:1) cost in 595 ms.

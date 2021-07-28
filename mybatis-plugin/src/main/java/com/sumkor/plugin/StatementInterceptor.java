@@ -27,6 +27,7 @@ public class StatementInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
+        log.info("------------------StatementInterceptor#intercept 开始------------------");
         StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
         MetaObject metaObject = MetaObject.forObject(statementHandler, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
 
@@ -34,10 +35,9 @@ public class StatementInterceptor implements Interceptor {
         if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
             /*return invocation.proceed();*/
         }
-        log.info("------------------StatementInterceptor开始------------------");
         String originalSql = (String) metaObject.getValue("delegate.boundSql.sql");
         log.info("originalSql: {}", originalSql);
-        log.info("------------------StatementInterceptor结束------------------");
+        log.info("------------------StatementInterceptor#intercept 结束------------------");
         return invocation.proceed();
     }
 

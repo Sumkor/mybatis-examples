@@ -36,6 +36,7 @@ public class PageInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
+        log.info("------------------PageInterceptor#intercept 开始------------------");
         final Object[] queryArgs = invocation.getArgs();
         final MappedStatement ms = (MappedStatement) queryArgs[MAPPED_STATEMENT_INDEX];
         final Object parameter = queryArgs[PARAMETER_INDEX];
@@ -59,9 +60,16 @@ public class PageInterceptor implements Interceptor {
         }
         Object result = invocation.proceed();
         PageUtil.removePagingParam();
+        log.info("------------------PageInterceptor#intercept 结束------------------");
         return result;
     }
 
+    /**
+     * 调用时机：
+     * @see org.apache.ibatis.session.defaults.DefaultSqlSessionFactory#openSession()
+     * @see org.apache.ibatis.session.Configuration#newExecutor(org.apache.ibatis.transaction.Transaction, org.apache.ibatis.session.ExecutorType)
+     * @see org.apache.ibatis.plugin.InterceptorChain#pluginAll(java.lang.Object)
+     */
     @Override
     public Object plugin(Object o) {
         return Plugin.wrap(o, this); // 封装代理类
