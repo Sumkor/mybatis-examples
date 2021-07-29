@@ -127,7 +127,9 @@ public class SelectListTest {
              * @see org.apache.ibatis.executor.statement.PreparedStatementHandler#query(java.sql.Statement, org.apache.ibatis.session.ResultHandler)
              * @see org.apache.ibatis.executor.resultset.DefaultResultSetHandler#handleResultSets(java.sql.Statement)
              */
-            System.out.println("students = " + students);
+            for (int i = 0; i < students.size(); i++) {
+                System.out.println(students.get(i));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

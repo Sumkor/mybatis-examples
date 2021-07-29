@@ -43,36 +43,42 @@ public class PageInterceptor implements Interceptor {
 
         // 获取分页参数
         Page pagingParam = PageUtil.getPagingParam();
-        if (pagingParam != null) {
+        try {
+            if (pagingParam != null) {
+                // 构造新的 BoundSql，该对象中包含 SQL 字符串
+                final BoundSql boundSql = ms.getBoundSql(parameter);
+                String pagingSql = getPagingSql(boundSql.getSql(), pagingParam.getOffset(), pagingParam.getLimit());
+                BoundSql newBoundSql = new BoundSql(ms.getConfiguration(), pagingSql, boundSql.getParameterMappings(), boundSql.getParameterObject());
 
-            // 构造新的 sql： select xxx from xxx where yyy limit offset,limit
-            final BoundSql boundSql = ms.getBoundSql(parameter);
-            String pagingSql = getPagingSql(boundSql.getSql(), pagingParam.getOffset(), pagingParam.getLimit());
+                // 构造新的 MappedStatement，该对象表示 XML 中的 SQL 信息
+                MappedStatement mappedStatement = newMappedStatement(ms, newBoundSql);
 
-            // 设置新的 MappedStatement
-            BoundSql newBoundSql = new BoundSql(ms.getConfiguration(), pagingSql,
-                    boundSql.getParameterMappings(), boundSql.getParameterObject());
-            MappedStatement mappedStatement = newMappedStatement(ms, newBoundSql);
-            queryArgs[MAPPED_STATEMENT_INDEX] = mappedStatement;
-
-            // 重置 RowBound
-            queryArgs[ROW_BOUNDS_INDEX] = new RowBounds(RowBounds.NO_ROW_OFFSET, RowBounds.NO_ROW_LIMIT);
+                // 重置 MappedStatement、RowBound
+                queryArgs[MAPPED_STATEMENT_INDEX] = mappedStatement;
+                queryArgs[ROW_BOUNDS_INDEX] = new RowBounds(RowBounds.NO_ROW_OFFSET, RowBounds.NO_ROW_LIMIT);
+            }
+            return invocation.proceed();
+        } finally {
+            log.info("------------------PageInterceptor#intercept 结束------------------");
+            PageUtil.removePagingParam();
         }
-        Object result = invocation.proceed();
-        PageUtil.removePagingParam();
-        log.info("------------------PageInterceptor#intercept 结束------------------");
-        return result;
     }
 
     /**
-     * 调用时机：
+     * 使得当前插件生效
+     *
+     * 基本上，Executor、StatementHandler、ParameterHandler、ResultSetHandler 对象在创建时，都会调用 InterceptorChain#pluginAll 方法
+     * @see org.apache.ibatis.session.Configuration
+     *
+     * 例如，创建 Executor 的调用链如下：
      * @see org.apache.ibatis.session.defaults.DefaultSqlSessionFactory#openSession()
      * @see org.apache.ibatis.session.Configuration#newExecutor(org.apache.ibatis.transaction.Transaction, org.apache.ibatis.session.ExecutorType)
      * @see org.apache.ibatis.plugin.InterceptorChain#pluginAll(java.lang.Object)
+     * @see org.apache.ibatis.plugin.Interceptor#plugin(java.lang.Object)
      */
     @Override
     public Object plugin(Object o) {
-        return Plugin.wrap(o, this); // 封装代理类
+        return Plugin.wrap(o, this);
     }
 
     @Override
@@ -81,7 +87,7 @@ public class PageInterceptor implements Interceptor {
     }
 
     /**
-     * 创建 MappedStatement
+     * 使用新的 BoundSql 对象，旧的 MappedStatement 对象，来构造新的 MappedStatement 对象
      */
     private MappedStatement newMappedStatement(MappedStatement ms, BoundSql newBoundSql) {
         MappedStatement.Builder builder = new MappedStatement.Builder(ms.getConfiguration(), ms.getId(),
@@ -106,6 +112,9 @@ public class PageInterceptor implements Interceptor {
         return builder.build();
     }
 
+    /**
+     * 构造新的 sql： select xxx from xxx where yyy limit offset,limit
+     */
     public String getPagingSql(String sql, int offset, int limit) {
         StringBuilder result = new StringBuilder(sql.length() + 100);
         result.append(sql).append(" limit ");

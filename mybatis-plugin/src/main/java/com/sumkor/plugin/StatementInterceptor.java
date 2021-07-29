@@ -31,10 +31,6 @@ public class StatementInterceptor implements Interceptor {
         StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
         MetaObject metaObject = MetaObject.forObject(statementHandler, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
 
-        RowBounds rowBounds = (RowBounds) metaObject.getValue("delegate.rowBounds");
-        if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-            /*return invocation.proceed();*/
-        }
         String originalSql = (String) metaObject.getValue("delegate.boundSql.sql");
         log.info("originalSql: {}", originalSql);
         log.info("------------------StatementInterceptor#intercept 结束------------------");
@@ -43,6 +39,6 @@ public class StatementInterceptor implements Interceptor {
 
     @Override
     public Object plugin(Object o) {
-        return Plugin.wrap(o, this); // 封装代理类
+        return Plugin.wrap(o, this);
     }
 }
