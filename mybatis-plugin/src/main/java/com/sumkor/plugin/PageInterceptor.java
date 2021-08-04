@@ -15,6 +15,8 @@ import java.util.Properties;
 import java.util.StringJoiner;
 
 /**
+ * 拦截 Executor#query 方法
+ *
  * @author Sumkor
  * @since 2021/7/26
  */

@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * @author 黄泽滨 【huangzebin@i72.com】
+ * Mapper 接口类动态代理测试
+ *
+ * @author Sumkor
  * @since 2021/7/28
  */
 public class MapperTest {

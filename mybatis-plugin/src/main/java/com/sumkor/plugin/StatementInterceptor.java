@@ -7,11 +7,12 @@ import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
-import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 
 /**
+ * 拦截 StatementHandler#prepare 方法
+ *
  * @author Sumkor
  * @since 2021/7/26
  */
@@ -28,6 +29,7 @@ public class StatementInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         log.info("------------------StatementInterceptor#intercept 开始------------------");
+        // 获取当前拦截的目标类
         StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
         MetaObject metaObject = MetaObject.forObject(statementHandler, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
 
