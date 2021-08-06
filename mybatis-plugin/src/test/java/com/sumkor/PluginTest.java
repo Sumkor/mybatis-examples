@@ -57,7 +57,7 @@ public class PluginTest {
              * 开启会话
              * @see org.apache.ibatis.session.defaults.DefaultSqlSessionFactory#openSessionFromDataSource(org.apache.ibatis.session.ExecutorType, org.apache.ibatis.session.TransactionIsolationLevel, boolean)
              *
-             * 构造 Executor，使用插件进行包装
+             * 构造 Executor，使用插件进行包装（每一次 openSession 操作，都会创建一个新的 Executor 对象，涉及到的各种代理也会重新生成一遍）
              * @see org.apache.ibatis.session.Configuration#newExecutor(org.apache.ibatis.transaction.Transaction, org.apache.ibatis.session.ExecutorType)
              *
              * 遍历所有的插件，判断插件是否属于当前 Executor

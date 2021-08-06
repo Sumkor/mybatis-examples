@@ -20,6 +20,7 @@
     <modules>
         <module>mybatis-intro</module>
         <module>mybatis-plugin</module>
+        <module>mybatis-datasource</module>
     </modules>
 
     <dependencies>

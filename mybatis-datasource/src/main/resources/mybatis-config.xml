@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- MyBatis XML 配置说明 https://mybatis.org/mybatis-3/zh/configuration.html -->
+
+    <!-- 引入其他配置文件 -->
+    <properties resource="jdbc.properties"/>
+
+    <settings>
+        <!-- 指定 MyBatis 所用日志的具体实现，未指定时将自动查找 -->
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+
+    <!-- 类型别名可为 Java 类型设置一个缩写名字。它仅用于 XML 配置，意在降低冗余的全限定类名书写 -->
+    <typeAliases>
+        <!-- 指定一个包名，MyBatis 会在包名下面搜索需要的 Java Bean。在没有注解的情况下，会使用 Bean 的首字母小写的非限定类名来作为它的别名 -->
+        <package name="com.sumkor.entity"/>
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC">
+                <property name="" value=""/>
+            </transactionManager>
+            <!-- POOLED 这种数据源的实现利用“池”的概念将 JDBC 连接对象组织起来，避免了创建新的连接实例时所必需的初始化和认证时间。 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+        <!-- 多数据源 -->
+        <environment id="test">
+            <transactionManager type="JDBC">
+                <property name="" value=""/>
+            </transactionManager>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <!-- 使用 package 标签，需要把 xml 映射文件和 Mapper 接口文件放在同一个目录，而且必须同名 -->
+        <package name="com.sumkor.mapper"/>
+<!--        <mapper resource="com/sumkor/mapper/StudentMapper.xml"/>-->
+    </mappers>
+</configuration>
