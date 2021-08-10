@@ -1,7 +1,6 @@
 package com.sumkor;
 
 import com.sumkor.entity.Student;
-import com.sumkor.mapper.StudentMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -67,7 +66,6 @@ public class SelectListTest {
              * @see org.apache.ibatis.session.defaults.DefaultSqlSession#DefaultSqlSession(org.apache.ibatis.session.Configuration, org.apache.ibatis.executor.Executor, boolean)
              */
 
-//            List<Student> students = sqlSession.selectList("selectByPrimaryKey", 1);
             List<Student> students = sqlSession.selectList("selectAll");
             /**
              * 全限定名（比如 “com.sumkor.mapper.StudentMapper.selectAll）将被直接用于查找及使用。
@@ -80,7 +78,8 @@ public class SelectListTest {
              * 关键位置！！！
              * @see org.apache.ibatis.session.defaults.DefaultSqlSession#selectList(String, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler)
              *
-             * 1. 从 Configuration 对象中获取 sql
+             * 1. 从 Configuration 对象中获取 sql 对象
+             * @see org.apache.ibatis.session.Configuration#getMappedStatement(java.lang.String)
              *
              * 2. 执行 Executor#query
              *

@@ -21,6 +21,7 @@
         <module>mybatis-intro</module>
         <module>mybatis-plugin</module>
         <module>mybatis-datasource</module>
+        <module>mybatis-cache</module>
     </modules>
 
     <dependencies>
