@@ -90,6 +90,9 @@ public class SelectListTest {
              * @see org.apache.ibatis.executor.BaseExecutor#queryFromDatabase(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.cache.CacheKey, org.apache.ibatis.mapping.BoundSql)
              * @see org.apache.ibatis.executor.SimpleExecutor#doQuery(org.apache.ibatis.mapping.MappedStatement, Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)
              *
+             * Executor 对象的主要功能是调用 StatementHandler 访问数据库，并将查询结果存入缓存中（如果配置了缓存的话）。
+             * StatementHandler 是真正访问数据库的地方。
+             *
              * ！！！这里可以看到整个流程是由 StatementHandler 串起来的
              * StatementHandler#prepare
              * StatementHandler#parameterize -> ParameterHandler#setParameters

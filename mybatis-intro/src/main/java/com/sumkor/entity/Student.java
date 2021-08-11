@@ -1,12 +1,13 @@
 package com.sumkor.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author Sumkor
  * @since 2021/6/21
  */
-public class Student {
+public class Student implements Serializable {
 
     private Integer id;
 
@@ -93,12 +94,12 @@ public class Student {
         return "Student{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", sex=" + sex +
-                ", locked=" + locked +
-                ", gmtCreated=" + gmtCreated +
-                ", gmtModified=" + gmtModified +
+//                ", phone='" + phone + '\'' +
+//                ", email='" + email + '\'' +
+//                ", sex=" + sex +
+//                ", locked=" + locked +
+//                ", gmtCreated=" + gmtCreated +
+//                ", gmtModified=" + gmtModified +
                 '}';
     }
 }
