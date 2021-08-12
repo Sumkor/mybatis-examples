@@ -16,8 +16,9 @@
         <!-- 支持的 jdbcType 见 org.apache.ibatis.type.JdbcType 或者 https://mybatis.org/mybatis-3/zh/sqlmap-xml.html -->
     </resultMap>
 
-    <!-- 二级缓存 -->
-    <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="false"/>
+    <!-- cache 标签用于声明这个 namespace 使用二级缓存 -->
+    <cache type="perpetual" eviction="FIFO" flushInterval="60000" size="512" readOnly="true" blocking="false"/>
+    <!-- cache-ref 代表引用别的命名空间的 Cache 配置，两个命名空间的操作使用的是同一个 Cache -->
 
     <sql id="base_column_list">
         id, name, phone, email, sex, locked, gmt_created, gmt_modified

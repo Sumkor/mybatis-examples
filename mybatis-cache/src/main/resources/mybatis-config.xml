@@ -10,6 +10,10 @@
     <properties resource="jdbc.properties"/>
 
     <settings>
+        <setting name="localCacheScope" value="SESSION"/>
+        <setting name="cacheEnabled" value="true"/>
+        <!--开启驼峰式命名，数据库的列名能够映射到去除下划线驼峰命名后的字段名-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
         <!-- 指定 MyBatis 所用日志的具体实现，未指定时将自动查找 -->
         <setting name="logImpl" value="LOG4J"/>
     </settings>

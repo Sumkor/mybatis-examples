@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
+ * 一级缓存的生命周期和 SqlSession 一致。
+ * 一级缓存内部设计简单，PerpetualCache 只是一个没有容量限定的 HashMap，在缓存的功能性上有所欠缺。
+ * 一级缓存最大范围是 SqlSession 内部，有多个 SqlSession 或者分布式的环境下，数据库写操作会引起脏数据，建议设定缓存级别为 Statement。
+ *
  * @author Sumkor
  * @since 2021/8/6
  */
@@ -59,6 +63,7 @@ public class L1CacheTest {
              * 1. 生成 cacheKey
              * @see org.apache.ibatis.executor.BaseExecutor#createCacheKey(org.apache.ibatis.mapping.MappedStatement, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.mapping.BoundSql)
              *
+             * 格式 = HashCode + Statement Id + Offset + Limit + Sql + Params
              * cacheKey = "-2126011546:2099012989:com.sumkor.mapper.StudentMapper.selectByPrimaryKey:0:2147483647:SELECT * FROM student WHERE id = ?:1:development"
              *
              * 2. 查询缓存（二级缓存）
