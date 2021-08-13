@@ -32,7 +32,7 @@ public class StatementInterceptor implements Interceptor {
         // 获取当前拦截的目标类
         StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
         MetaObject metaObject = MetaObject.forObject(statementHandler, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
-
+        // 通过反射工具类，获取 statementHandler 实例的 delegate 属性对象中的 boundSql 属性对象中的 sql 属性的值
         String originalSql = (String) metaObject.getValue("delegate.boundSql.sql");
         log.info("originalSql: {}", originalSql);
         log.info("------------------StatementInterceptor#intercept 结束------------------");
