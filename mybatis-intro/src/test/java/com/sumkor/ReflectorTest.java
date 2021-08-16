@@ -52,12 +52,14 @@ public class ReflectorTest {
          */
         System.out.println("name = " + name);
 
-        /**
-         * 执行结果：
-         *
-         * hasGetter = true
-         * type = class java.lang.String
-         * name = 小明
-         */
+        String gmtCreated = metaObject.findProperty("gmt_created", true);
+        System.out.println("gmtCreated = " + gmtCreated);
     }
+    /**
+     * 执行结果：
+     *
+     * hasGetter = true
+     * type = class java.lang.String
+     * name = 小明
+     */
 }

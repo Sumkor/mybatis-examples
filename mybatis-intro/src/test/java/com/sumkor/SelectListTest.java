@@ -2,6 +2,7 @@ package com.sumkor;
 
 import com.sumkor.entity.Student;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.jdbc.SqlRunner;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -10,7 +11,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * MyBatis 入门
@@ -138,4 +142,17 @@ public class SelectListTest {
         }
     }
 
+    /**
+     * 使用 SqlRunner 执行原始 SQL
+     */
+    @Test
+    public void selectOne() throws SQLException {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        Connection connection = sqlSession.getConnection();
+
+        SqlRunner sqlRunner = new SqlRunner(connection);
+        Map<String, Object> resultMap = sqlRunner.selectOne("select * from student where id = ?", "1");
+        System.out.println("resultMap = " + resultMap);
+        // resultMap = {DELETE=null, LOCKED=0, GMT_CREATED=2018-08-29 18:27:42.0, PHONE=13821378270, SEX=1, GMT_MODIFIED=2018-10-08 20:54:25.0, ID=1, EMAIL=xiaoming@mybatis.cn, NAME=小明}
+    }
 }
