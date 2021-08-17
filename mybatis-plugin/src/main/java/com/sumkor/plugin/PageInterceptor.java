@@ -8,6 +8,10 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.reflection.DefaultReflectorFactory;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
+import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
@@ -36,8 +40,40 @@ public class PageInterceptor implements Interceptor {
 
     private static final int ROW_BOUNDS_INDEX = 2;
 
+    /**
+     * 通过反射工具类 MetaObject 来修改 MappedStatement 对象中的 SQL 语句
+     */
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
+        log.info("------------------PageInterceptor#intercept 开始------------------");
+        final Object[] queryArgs = invocation.getArgs();
+        final MappedStatement ms = (MappedStatement) queryArgs[MAPPED_STATEMENT_INDEX];
+        final Object parameter = queryArgs[PARAMETER_INDEX];
+
+        // 获取分页参数
+        Page pagingParam = PageUtil.getPagingParam();
+        try {
+            if (pagingParam != null) {
+                // 构造新的分页查询 SQL 字符串
+                final BoundSql boundSql = ms.getBoundSql(parameter);
+                String pagingSql = getPagingSql(boundSql.getSql(), pagingParam.getOffset(), pagingParam.getLimit());
+
+                // 通过反射工具类，重置 MappedStatement 中的 SQL 语句
+                MetaObject metaObject = MetaObject.forObject(ms, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
+                metaObject.setValue("sqlSource.sqlSource.sql", pagingSql);
+
+                // 重置 RowBound
+                queryArgs[ROW_BOUNDS_INDEX] = new RowBounds(RowBounds.NO_ROW_OFFSET, RowBounds.NO_ROW_LIMIT);
+            }
+            return invocation.proceed();
+        } finally {
+            log.info("------------------PageInterceptor#intercept 结束------------------");
+            PageUtil.removePagingParam();
+        }
+
+    }
+
+    public Object intercept0(Invocation invocation) throws Throwable {
         log.info("------------------PageInterceptor#intercept 开始------------------");
         final Object[] queryArgs = invocation.getArgs();
         final MappedStatement ms = (MappedStatement) queryArgs[MAPPED_STATEMENT_INDEX];
