@@ -42,6 +42,9 @@
         <include refid="base_column_list"/>
         from student
         where gmt_created &gt; #{bTime, jdbcType=TIMESTAMP} and gmt_created &lt; #{eTime, jdbcType=TIMESTAMP}
+        <!--<if test="columnName != null">-->
+        order by ${columnName} desc
+        <!--</if>-->
     </select>
 
     <select id="selectBetweenCreatedTimeParam" resultMap="BaseResultMap">
@@ -49,6 +52,9 @@
         <include refid="base_column_list"/>
         from student
         where gmt_created &gt; #{bTime, jdbcType=TIMESTAMP} and gmt_created &lt; #{eTime, jdbcType=TIMESTAMP}
+        <if test="columnName != null">
+            order by ${columnName} desc
+        </if>
     </select>
 
     <update id="updateByPrimaryKey" parameterType="com.sumkor.entity.Student">

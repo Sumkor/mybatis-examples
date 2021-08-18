@@ -10,6 +10,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.apache.ibatis.session.ResultHandler;
@@ -59,7 +60,8 @@ public class PageInterceptor implements Interceptor {
                 String pagingSql = getPagingSql(boundSql.getSql(), pagingParam.getOffset(), pagingParam.getLimit());
 
                 // 通过反射工具类，重置 MappedStatement 中的 SQL 语句
-                MetaObject metaObject = MetaObject.forObject(ms, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
+                // MetaObject metaObject = MetaObject.forObject(ms, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
+                MetaObject metaObject = SystemMetaObject.forObject(ms);
                 metaObject.setValue("sqlSource.sqlSource.sql", pagingSql);
 
                 // 重置 RowBound
