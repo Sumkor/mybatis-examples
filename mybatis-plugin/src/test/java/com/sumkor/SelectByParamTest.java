@@ -1,6 +1,7 @@
 package com.sumkor;
 
 import com.sumkor.entity.Student;
+import com.sumkor.plugin.page.PageUtil;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -12,7 +13,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +49,7 @@ public class SelectByParamTest {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             Date beginDate = DateUtils.parseDate("2018-08-29 00:00:00", "yyyy-MM-dd HH:mm:ss");
             Date endDate = DateUtils.parseDate("2018-09-01 00:00:00", "yyyy-MM-dd HH:mm:ss");
+            PageUtil.setPagingParam(1, 2);
             Map<Object, Object> map = new HashMap<>();
             map.put("bTime", beginDate);
             map.put("eTime", endDate);
