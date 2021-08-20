@@ -46,4 +46,9 @@ public interface StudentMapper {
      * @param eTime 结束时间
      */
     List<Student> selectBetweenCreatedTimeParam(@Param("bTime") Date bTime, @Param("eTime") Date eTime);
+
+    /**
+     * 插入，id 自增
+     */
+    int insert(Student student);
 }

@@ -64,4 +64,16 @@
         sex=#{sex, jdbcType=VARCHAR}, locked=#{locked, jdbcType=VARCHAR}
         where id=#{id, jdbcType=INTEGER}
     </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sumkor.entity.Student">
+        insert into student (name, phone, email, sex, locked) values
+        (#{name}, #{phone}, #{email}, #{sex}, #{locked})
+    </insert>
+
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="com.sumkor.entity.Student">
+        insert into student (name, phone, email, sex, locked) values
+        <foreach item="student" collection="list" separator=",">
+            (#{student.name}, #{student.phone}, #{student.email}, #{student.sex}, #{student.locked})
+        </foreach>
+    </insert>
 </mapper>
