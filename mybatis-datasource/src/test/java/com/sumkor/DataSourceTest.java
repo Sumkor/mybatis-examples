@@ -231,6 +231,68 @@ public class DataSourceTest {
         endLatch.await();
     }
 
+    /**
+     * 如果使用时，检测到连接无效，会怎么处理
+     *
+     * 配置
+     * <property name="poolPingEnabled" value="true"/>
+     * <property name="poolPingQuery" value="select 1 from abc"/>
+     */
+    @Test
+    public void ping() {
+        /**
+         * 关键代码
+         * @see org.apache.ibatis.datasource.pooled.PooledDataSource#pingConnection
+         *
+         * 在执行 ping 之前，会检查 距离上一次使用连接的时间，大于连接检查频率
+         *
+         * 而这里第一次从连接池中拿到连接，ping失败了，当作坏连接而作废掉，重新建立新连接，再校验新连接是否有效。
+         * 由于建立新连接与校验新连接是否有效，是发生在同一毫秒内，因此不会进入 ping 逻辑，因此检出成功。
+         * @see org.apache.ibatis.datasource.pooled.PooledConnection#getTimeElapsedSinceLastUse()
+         */
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        Student student = sqlSession.selectOne("selectByPrimaryKey", 2);
+        System.out.println("student = " + student);
+        sqlSession.close();
+    }
+    /**
+     * 执行结果：
+     *
+     * 情况一：
+     *
+     * 2021-08-24 23:47:24,858 [main] DEBUG [org.apache.ibatis.datasource.pooled.PooledDataSource] - PooledDataSource: Could not get a good connection to the database.
+     * org.apache.ibatis.exceptions.PersistenceException:
+     * ### Error querying database.  Cause: java.sql.SQLException: PooledDataSource: Could not get a good connection to the database.
+     * ### The error may exist in com/sumkor/mapper/StudentMapper.java (best guess)
+     * ### The error may involve com.sumkor.mapper.StudentMapper.selectByPrimaryKey
+     * ### The error occurred while executing a query
+     * ### Cause: java.sql.SQLException: PooledDataSource: Could not get a good connection to the database.
+     *
+     * 情况二：
+     *
+     * 2021-08-25 00:13:17,830 [main] DEBUG [org.apache.ibatis.transaction.jdbc.JdbcTransaction] - Opening JDBC Connection
+     * Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+     * 2021-08-25 00:13:18,487 [main] DEBUG [org.apache.ibatis.datasource.pooled.PooledDataSource] - Created connection 112797691.
+     * 2021-08-25 00:13:18,487 [main] DEBUG [org.apache.ibatis.datasource.pooled.PooledDataSource] - Testing connection 112797691 ...
+     * 2021-08-25 00:13:18,516 [main] WARN  [org.apache.ibatis.datasource.pooled.PooledDataSource] - Execution of ping query 'select 1 from abc' failed: Table 'testdb.abc' doesn't exist
+     * 2021-08-25 00:13:18,523 [main] DEBUG [org.apache.ibatis.datasource.pooled.PooledDataSource] - Connection 112797691 is BAD: Table 'testdb.abc' doesn't exist
+     * 2021-08-25 00:13:18,523 [main] DEBUG [org.apache.ibatis.datasource.pooled.PooledDataSource] - A bad connection (112797691) was returned from the pool, getting another connection.
+     * 2021-08-25 00:13:18,550 [main] DEBUG [org.apache.ibatis.datasource.pooled.PooledDataSource] - Created connection 112049309.
+     * 2021-08-25 00:13:18,550 [main] DEBUG [org.apache.ibatis.transaction.jdbc.JdbcTransaction] - Setting autocommit to false on JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6adbc9d]
+     * 2021-08-25 00:13:18,561 [main] DEBUG [com.sumkor.mapper.StudentMapper.selectByPrimaryKey] - ==>  Preparing: SELECT * FROM student WHERE id = ?
+     * 2021-08-25 00:13:18,603 [main] DEBUG [com.sumkor.mapper.StudentMapper.selectByPrimaryKey] - ==> Parameters: 2(Integer)
+     * 2021-08-25 00:13:18,638 [main] TRACE [com.sumkor.mapper.StudentMapper.selectByPrimaryKey] - <==    Columns: id, name, phone, email, sex, locked, gmt_created, gmt_modified, delete
+     * 2021-08-25 00:13:18,640 [main] TRACE [com.sumkor.mapper.StudentMapper.selectByPrimaryKey] - <==        Row: 2, 大明, 13821378271, xiaoli@mybatis.cn, 0, 0, 2018-08-30 18:27:42, 2018-10-08 20:54:29, null
+     * 2021-08-25 00:13:18,643 [main] DEBUG [com.sumkor.mapper.StudentMapper.selectByPrimaryKey] - <==      Total: 1
+     * student = Student{id=2, name='大明'}
+     * 2021-08-25 00:13:18,643 [main] DEBUG [org.apache.ibatis.transaction.jdbc.JdbcTransaction] - Resetting autocommit to true on JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6adbc9d]
+     * 2021-08-25 00:13:18,644 [main] DEBUG [org.apache.ibatis.transaction.jdbc.JdbcTransaction] - Closing JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6adbc9d]
+     * 2021-08-25 00:13:18,644 [main] DEBUG [org.apache.ibatis.datasource.pooled.PooledDataSource] - Testing connection 112049309 ...
+     * 2021-08-25 00:13:18,645 [main] WARN  [org.apache.ibatis.datasource.pooled.PooledDataSource] - Execution of ping query 'select 1 from abc' failed: Table 'testdb.abc' doesn't exist
+     * 2021-08-25 00:13:18,645 [main] DEBUG [org.apache.ibatis.datasource.pooled.PooledDataSource] - Connection 112049309 is BAD: Table 'testdb.abc' doesn't exist
+     * 2021-08-25 00:13:18,645 [main] DEBUG [org.apache.ibatis.datasource.pooled.PooledDataSource] - A bad connection (112049309) attempted to return to the pool, discarding connection.
+     *
+     */
 
     /**
      * 获取数据库连接的几种方式

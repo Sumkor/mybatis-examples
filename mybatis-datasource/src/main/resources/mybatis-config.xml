@@ -22,15 +22,16 @@
 
     <environments default="development">
         <environment id="development">
-            <transactionManager type="JDBC">
-                <property name="" value=""/>
-            </transactionManager>
+            <transactionManager type="JDBC"/>
             <!-- POOLED 这种数据源的实现利用“池”的概念将 JDBC 连接对象组织起来，避免了创建新的连接实例时所必需的初始化和认证时间。 -->
             <dataSource type="POOLED">
                 <property name="driver" value="${jdbc.driver}"/>
                 <property name="url" value="${jdbc.url}"/>
                 <property name="username" value="${jdbc.username}"/>
                 <property name="password" value="${jdbc.password}"/>
+                <property name="poolPingEnabled" value="true"/>
+                <property name="poolPingQuery" value="select 1 from abc"/>
+                <property name="poolPingConnectionsNotUsedFor" value="0"/>
             </dataSource>
         </environment>
         <!-- 多数据源 -->
