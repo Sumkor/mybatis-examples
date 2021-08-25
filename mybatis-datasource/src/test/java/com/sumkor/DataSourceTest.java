@@ -82,9 +82,11 @@ public class DataSourceTest {
          *
          * 构造 Statement 对象
          * @see org.apache.ibatis.executor.SimpleExecutor#prepareStatement(org.apache.ibatis.executor.statement.StatementHandler, org.apache.ibatis.logging.Log)
+         *
+         * 其中会先获取数据库连接对象，再利用 Connection 来创建 Statement
          * @see org.apache.ibatis.executor.BaseExecutor#getConnection(org.apache.ibatis.logging.Log)
          *
-         * 其中会从事务对象 JdbcTransaction 中，获取数据库连接对象
+         * 由事务对象 JdbcTransaction 来控制对数据库连接对象的获取
          * @see org.apache.ibatis.transaction.jdbc.JdbcTransaction#getConnection()
          * @see org.apache.ibatis.transaction.jdbc.JdbcTransaction#openConnection()
          *
@@ -96,11 +98,17 @@ public class DataSourceTest {
 
         Student student02 = sqlSession.selectOne("selectByPrimaryKey", 2);
         /**
-         * 这里拿到的连接对象，跟上一次查询的是同一个吗？是的！
+         * 这里拿到的连接对象，跟上一次查询的是同一个吗？是的！PooledConnection 实例是一样的，原始的 ConnectionImpl 也是一样的。
          * @see org.apache.ibatis.executor.BaseExecutor#getConnection(org.apache.ibatis.logging.Log)
          *
          * 因为 JdbcTransaction 在一次会话中是单例的，因此在同一次会话使用同一个数据库连接
          * @see org.apache.ibatis.transaction.jdbc.JdbcTransaction#getConnection()
+         *
+         * 这里拿到的 Statement 对象，跟上一次查询的是同一个吗？不是！
+         * 因为 StatementHandler#prepare 每次查询都会构建新的 Statement 对象。
+         * @see org.apache.ibatis.executor.SimpleExecutor#prepareStatement(org.apache.ibatis.executor.statement.StatementHandler, org.apache.ibatis.logging.Log)
+         * @see org.apache.ibatis.executor.statement.BaseStatementHandler#prepare(java.sql.Connection, java.lang.Integer)
+         * @see org.apache.ibatis.executor.statement.PreparedStatementHandler#instantiateStatement(java.sql.Connection)
          */
         System.out.println("student02 = " + student02);
 

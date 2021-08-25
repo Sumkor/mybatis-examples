@@ -34,6 +34,26 @@ public class L2CacheTest {
         try {
             Reader reader = Resources.getResourceAsReader("mybatis-config.xml");
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+            /**
+             * 解析 mybatis-config.xml 文件时，会解析 mapper 相关类和映射文件
+             * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#parseConfiguration(org.apache.ibatis.parsing.XNode)
+             * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#mapperElement(org.apache.ibatis.parsing.XNode)
+             *
+             * 其中，解析 @CacheNamespace 注解，或者解析 xml 配置文件时，会触发构建二级缓存对象
+             * @see org.apache.ibatis.builder.xml.XMLMapperBuilder#parse()
+             * @see org.apache.ibatis.builder.xml.XMLMapperBuilder#configurationElement(org.apache.ibatis.parsing.XNode)
+             *
+             * 构建二级缓存对象，这里采用了装饰器模式
+             * @see org.apache.ibatis.builder.xml.XMLMapperBuilder#cacheElement(org.apache.ibatis.parsing.XNode)
+             * @see org.apache.ibatis.builder.MapperBuilderAssistant#useNewCache(java.lang.Class, java.lang.Class, java.lang.Long, java.lang.Integer, boolean, boolean, java.util.Properties)
+             * @see org.apache.ibatis.mapping.CacheBuilder#build()
+             * @see org.apache.ibatis.mapping.CacheBuilder#setStandardDecorators(org.apache.ibatis.cache.Cache)
+             *
+             * 构建 MappedStatement 的时候，会将当前 namespace 中的二级缓存 cache 对象，赋值给 MappedStatement
+             * @see org.apache.ibatis.builder.xml.XMLMapperBuilder#buildStatementFromContext(java.util.List)
+             * @see org.apache.ibatis.builder.xml.XMLStatementBuilder#parseStatementNode()
+             * @see org.apache.ibatis.builder.MapperBuilderAssistant#addMappedStatement(java.lang.String, org.apache.ibatis.mapping.SqlSource, org.apache.ibatis.mapping.StatementType, org.apache.ibatis.mapping.SqlCommandType, java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.Class, java.lang.String, java.lang.Class, org.apache.ibatis.mapping.ResultSetType, boolean, boolean, boolean, org.apache.ibatis.executor.keygen.KeyGenerator, java.lang.String, java.lang.String, java.lang.String, org.apache.ibatis.scripting.LanguageDriver, java.lang.String)
+             */
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,18 +75,7 @@ public class L2CacheTest {
         sqlSession02.close();
 
         /**
-         * 1. 构建二级缓存对象
-         *
-         * 解析 @CacheNamespace 注解，或者解析 xml 配置文件时，会触发构建二级缓存对象
-         * @see org.apache.ibatis.builder.xml.XMLMapperBuilder#cacheElement(org.apache.ibatis.parsing.XNode)
-         *
-         * 构建二级缓存对象，这里采用了装饰器模式
-         * @see org.apache.ibatis.builder.MapperBuilderAssistant#useNewCache(java.lang.Class, java.lang.Class, java.lang.Long, java.lang.Integer, boolean, boolean, java.util.Properties)
-         * @see org.apache.ibatis.mapping.CacheBuilder#build()
-         * @see org.apache.ibatis.mapping.CacheBuilder#setStandardDecorators(org.apache.ibatis.cache.Cache)
-         *
-         * 2. 使用二级缓存！！！
-         *
+         * 使用二级缓存
          * @see org.apache.ibatis.executor.CachingExecutor#query(org.apache.ibatis.mapping.MappedStatement, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.cache.CacheKey, org.apache.ibatis.mapping.BoundSql)
          */
     }

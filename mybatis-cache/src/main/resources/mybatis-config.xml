@@ -11,8 +11,9 @@
 
     <settings>
         <setting name="localCacheScope" value="SESSION"/>
+        <!-- 全局性地开启或关闭所有映射器配置文件中已配置的任何缓存 -->
         <setting name="cacheEnabled" value="true"/>
-        <!--开启驼峰式命名，数据库的列名能够映射到去除下划线驼峰命名后的字段名-->
+        <!-- 开启驼峰式命名，数据库的列名能够映射到去除下划线驼峰命名后的字段名 -->
         <setting name="mapUnderscoreToCamelCase" value="true"/>
         <!-- 指定 MyBatis 所用日志的具体实现，未指定时将自动查找 -->
         <setting name="logImpl" value="LOG4J"/>
