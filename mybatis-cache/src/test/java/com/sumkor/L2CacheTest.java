@@ -39,11 +39,11 @@ public class L2CacheTest {
              * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#parseConfiguration(org.apache.ibatis.parsing.XNode)
              * @see org.apache.ibatis.builder.xml.XMLConfigBuilder#mapperElement(org.apache.ibatis.parsing.XNode)
              *
-             * 其中，解析 @CacheNamespace 注解，或者解析 xml 配置文件时，会触发构建二级缓存对象
+             * 其中，解析 @CacheNamespace 注解，或者解析映射文件中的 cache 标签时，会触发构建二级缓存对象
              * @see org.apache.ibatis.builder.xml.XMLMapperBuilder#parse()
              * @see org.apache.ibatis.builder.xml.XMLMapperBuilder#configurationElement(org.apache.ibatis.parsing.XNode)
              *
-             * 构建二级缓存对象，这里采用了装饰器模式
+             * 构建二级缓存对象，这里采用了装饰器模式，并注册到 Configuration 对象之中
              * @see org.apache.ibatis.builder.xml.XMLMapperBuilder#cacheElement(org.apache.ibatis.parsing.XNode)
              * @see org.apache.ibatis.builder.MapperBuilderAssistant#useNewCache(java.lang.Class, java.lang.Class, java.lang.Long, java.lang.Integer, boolean, boolean, java.util.Properties)
              * @see org.apache.ibatis.mapping.CacheBuilder#build()
